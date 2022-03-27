@@ -1,6 +1,7 @@
 package com.example.voicenotes.di
 
 import android.content.Context
+import com.example.voicenotes.ui.notes.NotesFragment
 import com.example.voicenotes.ui.record.RecordFragment
 import dagger.BindsInstance
 import dagger.Component
@@ -16,4 +17,5 @@ interface AppComponent {
     }
 
     fun inject(recordFragment: RecordFragment)
+    fun inject(notesFragment: NotesFragment)
 }

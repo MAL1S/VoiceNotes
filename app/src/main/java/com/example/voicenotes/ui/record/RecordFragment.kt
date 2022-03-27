@@ -30,14 +30,14 @@ class RecordFragment : Fragment() {
     lateinit var recordViewModel: RecordFragmentViewModel
 
     private lateinit var recorder: Recorder
-    private var wasFileNameSet = false
 
     private val handler = Handler(Looper.getMainLooper())
-    private var seconds = 0
-    private val timerTask = object: Runnable {
+    private var seconds = -1
+    private val timerTask = object : Runnable {
         override fun run() {
-            binding.tvRecordingDuration.text = "Идет запись ${seconds / 60}:${if (seconds%60<10) 0 else ""}${seconds % 60}"
             seconds++
+            binding.tvRecordingDuration.text =
+                "Идет запись ${seconds / 60}:${if (seconds % 60 < 10) 0 else ""}${seconds % 60}"
             handler.postDelayed(this, 1000)
         }
     }
@@ -69,7 +69,6 @@ class RecordFragment : Fragment() {
         binding.apply {
             fabStartRecord.setOnClickListener {
                 val fileName = if (etFileName.text.toString().isNotEmpty()) {
-                    wasFileNameSet = true
                     etFileName.text.toString()
                 } else {
                     ""
@@ -83,19 +82,16 @@ class RecordFragment : Fragment() {
                 recorder.stopRecording()
                 cancelTimer()
                 updateButtons(false)
-                //view.findNavController().popBackStack()
             }
 
             btnSaveFile.setOnClickListener {
-                var fileName: String? = null
-                if (!wasFileNameSet) {
-                    if (etFileName.text.toString().isNotEmpty()) {
-                        fileName = etFileName.text.toString()
-                    } else {
-                        recordViewModel.getFileName()
-                    }
-                    Toast.makeText(requireContext(), "$fileName", Toast.LENGTH_SHORT).show()
+                val fileName = if (etFileName.text.toString().isNotEmpty()) {
+                    etFileName.text.toString()
+                } else {
+                    recordViewModel.getFileName()
                 }
+                Toast.makeText(requireContext(), fileName, Toast.LENGTH_SHORT).show()
+
                 recorder.saveFile(fileName = fileName)
                 recorder.releasePlayer()
                 view.findNavController().popBackStack()
@@ -115,7 +111,9 @@ class RecordFragment : Fragment() {
 
     private fun cancelTimer() {
         handler.removeCallbacks(timerTask)
-        binding.tvRecordingDuration.text = "Запись закончена ${seconds / 60}:${if (seconds%60<10) 0 else ""}${seconds % 60}"
+        binding.tvRecordingDuration.text =
+            "Запись закончена ${seconds / 60}:${if (seconds % 60 < 10) 0 else ""}${seconds % 60}"
+        seconds = 0
     }
 
     private fun updateButtons(flag: Boolean) {
@@ -128,7 +126,7 @@ class RecordFragment : Fragment() {
     }
 
     private fun showRecordingDuration() {
-        handler.postDelayed(timerTask, 1000)
+        handler.postDelayed(timerTask, 0)
     }
 }
 

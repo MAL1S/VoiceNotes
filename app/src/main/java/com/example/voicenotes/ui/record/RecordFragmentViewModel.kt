@@ -11,7 +11,6 @@ import javax.inject.Inject
 
 
 class RecordFragmentViewModel @Inject constructor(
-    context: Context,
     private val fileNameUseCase: FileUseCase
 ): ViewModel() {
 

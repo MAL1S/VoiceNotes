@@ -21,7 +21,8 @@ class Recorder(
     private val context: Context
 ) {
 
-    var output: String? = null
+    private var output: String? = null
+    private var currentFileName = ""
     private var mediaRecorder: MediaRecorder? = null
     private var state: Boolean = false
     private var recordingStopped: Boolean = false
@@ -42,15 +43,17 @@ class Recorder(
                     mediaRecorder?.apply {
                         setAudioSource(MediaRecorder.AudioSource.MIC)
                         setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
-                        setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
-                        setAudioEncodingBitRate(16 * 44100)
-                        setAudioSamplingRate(44100)
+                        setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
+                        setAudioEncodingBitRate(128000);
+                        setAudioSamplingRate(96000);
 
                         output = if (fileName != "") {
                             Log.d("AAA", fileName)
+                            currentFileName = fileName
                             context.filesDir.absolutePath + "/$fileName.m4a"
                         } else {
                             Log.d("AAA", FILE_NAME)
+                            currentFileName = FILE_NAME
                             context.filesDir.absolutePath + "/$FILE_NAME.m4a"
                         }
                         setOutputFile(output)
@@ -59,7 +62,6 @@ class Recorder(
                         start()
                     }
                     state = true
-                    //Toast.makeText(context, "Recording started!", Toast.LENGTH_SHORT).show()
                 } catch (e: IllegalStateException) {
                     e.printStackTrace()
                 } catch (e: IOException) {
@@ -81,8 +83,8 @@ class Recorder(
     }
 
     fun saveFile(fileName: String?) {
-        if (fileName != null) {
-            val oldFile = File(context.filesDir.absolutePath + "/$FILE_NAME.m4a")
+        if (fileName != currentFileName) {
+            val oldFile = File(output!!)
             val newFile = File(context.filesDir.absolutePath + "/$fileName.m4a")
 
             try {

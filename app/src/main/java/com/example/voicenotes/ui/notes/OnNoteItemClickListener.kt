@@ -4,5 +4,5 @@ import com.example.voicenotes.domain.model.Note
 
 interface OnNoteItemClickListener {
 
-    fun onNoteClick(note: Note)
+    fun onNoteClick(note: Note, position: Int)
 }

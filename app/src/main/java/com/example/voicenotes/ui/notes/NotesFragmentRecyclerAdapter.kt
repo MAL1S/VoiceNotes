@@ -16,7 +16,7 @@ class NotesFragmentRecyclerAdapter(
 
     override fun onBindViewHolder(holder: NotesFragmentViewHolder, position: Int) {
         val note = notesList[position]
-        holder.bind(note)
+        holder.bind(note = note, position = position)
     }
 
     override fun getItemCount() = notesList.size

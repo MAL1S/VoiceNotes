@@ -11,8 +11,4 @@ class FileUseCase @Inject constructor(
     fun getFileName(): String {
         return fileRepositoryImpl.getFileName()
     }
-
-    fun saveFileToStorage(file: File) {
-        fileRepositoryImpl.saveFileToStorage(file = file)
-    }
 }

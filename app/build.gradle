@@ -78,6 +78,13 @@ dependencies {
     // optional - Multiprocess support
     implementation "androidx.work:work-multiprocess:$work_version"
 
+    //concurrent
+    implementation "androidx.concurrent:concurrent-futures-ktx:1.1.0"
+
+    //VK SDK
+    implementation 'com.vk:android-sdk-core:3.5.1'
+    implementation 'com.vk:android-sdk-api:3.5.1' // generated models and api methods
+
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.4.1'
     implementation 'com.google.android.material:material:1.5.0'
