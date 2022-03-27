@@ -18,5 +18,12 @@
         <action
             android:id="@+id/action_notesFragment_to_recordFragment"
             app:destination="@id/recordFragment" />
+        <action
+            android:id="@+id/action_notesFragment_to_authFragment"
+            app:destination="@id/authFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/authFragment"
+        android:name="com.example.voicenotes.ui.auth.AuthFragment"
+        android:label="AuthFragment" />
 </navigation>

@@ -12,6 +12,8 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.*
+import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -23,6 +25,9 @@ import com.example.voicenotes.App
 import com.example.voicenotes.R
 import com.example.voicenotes.databinding.FragmentNotesBinding
 import com.example.voicenotes.domain.model.Note
+import com.vk.api.sdk.VK
+import com.vk.api.sdk.auth.VKAuthenticationResult
+import com.vk.api.sdk.auth.VKScope
 import java.io.File
 import javax.inject.Inject
 
@@ -47,6 +52,7 @@ class NotesFragment : Fragment(), OnNoteItemClickListener {
     private val notes = mutableListOf<Note>()
     private var currentIndex = -1
 
+    private lateinit var authLauncher: ActivityResultLauncher<Collection<VKScope>>
 
     private var playerIntent: Intent? = null
     private val handler = Handler(Looper.getMainLooper())
@@ -86,6 +92,16 @@ class NotesFragment : Fragment(), OnNoteItemClickListener {
         savedInstanceState: Bundle?
     ): View? {
         setHasOptionsMenu(true)
+        authLauncher = VK.login(requireActivity()) { result: VKAuthenticationResult ->
+            when (result) {
+                is VKAuthenticationResult.Success -> {
+                    Toast.makeText(requireActivity(), "URAAA", Toast.LENGTH_SHORT).show()
+                }
+                is VKAuthenticationResult.Failed -> {
+                    Toast.makeText(requireActivity(), "(((((((((", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
         return inflater.inflate(R.layout.fragment_notes, container, false)
     }
 
@@ -113,7 +129,9 @@ class NotesFragment : Fragment(), OnNoteItemClickListener {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.nav_auth -> {
+//                view?.findNavController()?.navigate(R.id.action_notesFragment_to_authFragment)
 
+                authLauncher.launch(arrayListOf(VKScope.DOCS))
             }
         }
         return super.onOptionsItemSelected(item)
