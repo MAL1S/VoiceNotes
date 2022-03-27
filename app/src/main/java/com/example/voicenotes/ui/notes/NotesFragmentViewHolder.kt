@@ -56,7 +56,7 @@ class NotesFragmentViewHolder(
             tvNoteTitle.text = note.title
 
             if (duration != null && currentDuration != null) {
-                Log.d("FFF", "current = $currentDuration overall = $duration")
+                Log.d("FFF", "current = $currentDuration overall = $duration isPlaying = ${note.isPlaying} real = ${NotesFragment.isPlaying}")
                 progressNotePlaying.progress = ((1.0*currentDuration / duration) * 100).toInt()
                 Log.d("FFF", "${progressNotePlaying.progress}")
 

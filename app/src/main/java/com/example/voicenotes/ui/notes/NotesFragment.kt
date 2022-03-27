@@ -52,7 +52,7 @@ class NotesFragment : Fragment(), OnNoteItemClickListener {
     private val notes = mutableListOf<Note>()
     private var currentIndex = -1
 
-    private lateinit var authLauncher: ActivityResultLauncher<Collection<VKScope>>
+    private var authLauncher: ActivityResultLauncher<Collection<VKScope>>? = null
 
     private var playerIntent: Intent? = null
     private val handler = Handler(Looper.getMainLooper())
@@ -64,7 +64,15 @@ class NotesFragment : Fragment(), OnNoteItemClickListener {
                     val position =
                         ((player!!.currentPosition % (1000 * 60 * 60)) % (1000 * 60))
 
-                    if (position == notes[currentIndex].overallDuration) {
+//                    if (notes[currentIndex].isPlaying && notes[currentIndex].currentDuration == position) {
+//                        Log.d("QQQ", "${notes[currentIndex]} == $position")
+//                        //updateNoteToNotPlaying(currentIndex)
+//                        return
+//                    }
+                    if (position >= notes[currentIndex].overallDuration!! ||
+                        notes[currentIndex].isPlaying &&
+                        notes[currentIndex].currentDuration == position &&
+                        position + 350 >= notes[currentIndex].overallDuration!!) {
                         updateNoteToNotPlaying(currentIndex)
                         return
                     }
@@ -92,13 +100,15 @@ class NotesFragment : Fragment(), OnNoteItemClickListener {
         savedInstanceState: Bundle?
     ): View? {
         setHasOptionsMenu(true)
-        authLauncher = VK.login(requireActivity()) { result: VKAuthenticationResult ->
-            when (result) {
-                is VKAuthenticationResult.Success -> {
-                    Toast.makeText(requireActivity(), "URAAA", Toast.LENGTH_SHORT).show()
-                }
-                is VKAuthenticationResult.Failed -> {
-                    Toast.makeText(requireActivity(), "(((((((((", Toast.LENGTH_SHORT).show()
+        if (authLauncher == null) {
+            authLauncher = VK.login(requireActivity()) { result: VKAuthenticationResult ->
+                when (result) {
+                    is VKAuthenticationResult.Success -> {
+                        Toast.makeText(requireActivity(), "URAAA", Toast.LENGTH_SHORT).show()
+                    }
+                    is VKAuthenticationResult.Failed -> {
+                        Toast.makeText(requireActivity(), "(((((((((", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
         }
@@ -131,7 +141,7 @@ class NotesFragment : Fragment(), OnNoteItemClickListener {
             R.id.nav_auth -> {
 //                view?.findNavController()?.navigate(R.id.action_notesFragment_to_authFragment)
 
-                authLauncher.launch(arrayListOf(VKScope.DOCS))
+                authLauncher?.launch(arrayListOf(VKScope.DOCS))
             }
         }
         return super.onOptionsItemSelected(item)
@@ -309,7 +319,7 @@ class NotesFragment : Fragment(), OnNoteItemClickListener {
     private fun updateNoteToPause(position: Int) {
         notes[position].apply {
             isPlaying = false
-            currentDuration =  ((currentPosition % (1000 * 60 * 60)) % (1000 * 60))
+            currentDuration = ((currentPosition % (1000 * 60 * 60)) % (1000 * 60))
         }
         isPlaying = false
         adapter.notifyItemChanged(position)
