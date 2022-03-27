@@ -3,10 +3,7 @@ package com.example.voicenotes.ui.notes
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.media.MediaRecorder
-import android.os.Build
 import android.os.Bundle
-import android.os.Environment
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -14,16 +11,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.navigation.findNavController
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.voicenotes.R
 import com.example.voicenotes.databinding.FragmentNotesBinding
 import com.example.voicenotes.domain.model.Note
-import com.example.voicenotes.ui.player.PlayerService
+import com.example.voicenotes.ui.services.PlayerService
 import java.io.File
-import java.io.IOException
 
 class NotesFragment : Fragment(), OnNoteItemClickListener {
 
@@ -32,13 +27,6 @@ class NotesFragment : Fragment(), OnNoteItemClickListener {
     private lateinit var adapter: NotesFragmentRecyclerAdapter
 
     private val files = mutableListOf<File>()
-
-    private var output: String? = null
-    private var mediaRecorder: MediaRecorder? = null
-    private var state: Boolean = false
-    private var recordingStopped: Boolean = false
-
-    private var count = 0
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -53,79 +41,33 @@ class NotesFragment : Fragment(), OnNoteItemClickListener {
         checkForPermissions()
 
         setupVariables()
-        setupUI()
+        setupUI(view)
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        updateUI()
     }
 
     private fun setupVariables() {
         adapter = NotesFragmentRecyclerAdapter(emptyList(), this)
     }
 
-    private fun setupUI() {
+    private fun setupUI(view: View) {
         binding.apply {
-            fabStartRecord.setOnClickListener {
-
-                startRecording()
-
-
-//                Toast.makeText(requireContext(), "Voice recording started", Toast.LENGTH_SHORT)
-//                    .show()
-            }
-
-            fabStopRecord.setOnClickListener {
-                stopRecording()
-            }
-
             rcvNotes.adapter = adapter
+            btnGetToRecordingScreen.setOnClickListener {
+                view.findNavController().navigate(R.id.action_notesFragment_to_recordFragment)
+            }
         }
         updateUI()
     }
 
-    private fun startRecording() {
-        try {
-            output =
-                requireContext().filesDir.absolutePath + "/${count++}.m4a"
-            mediaRecorder = MediaRecorder()
-
-            mediaRecorder?.setAudioSource(MediaRecorder.AudioSource.MIC);
-            mediaRecorder?.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-            mediaRecorder?.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-            mediaRecorder?.setAudioEncodingBitRate(16*44100);
-            mediaRecorder?.setAudioSamplingRate(44100);
-            mediaRecorder?.setOutputFile(output)
-            mediaRecorder?.prepare()
-            mediaRecorder?.start()
-            state = true
-            updateUI()
-            Toast.makeText(requireContext(), "Recording started!", Toast.LENGTH_SHORT).show()
-        } catch (e: IllegalStateException) {
-            e.printStackTrace()
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-    }
-
-    private fun stopRecording() {
-        if (state) {
-            mediaRecorder?.stop()
-            mediaRecorder?.release()
-            state = false
-            updateUI()
-        } else {
-            Toast.makeText(requireContext(), "You are not recording right now!", Toast.LENGTH_SHORT)
-                .show()
-        }
-    }
-
     private fun updateUI() {
-        binding.apply {
-            fabStartRecord.visibility = if (state) View.GONE else View.VISIBLE
-            fabStopRecord.visibility = if (state) View.VISIBLE else View.GONE
-        }
-
         adapter = NotesFragmentRecyclerAdapter(getAllNotes(), this)
         binding.rcvNotes.adapter = adapter
         adapter.notifyDataSetChanged()
-        Log.d("AAA", adapter.getList().toString())
     }
 
     private fun getAllNotes(): List<Note> {
@@ -135,6 +77,7 @@ class NotesFragment : Fragment(), OnNoteItemClickListener {
             File(requireContext().filesDir.absolutePath.toString())
 
         for (file in dir.listFiles()) {
+            Log.d("AAA", "$file")
 
             notes.add(
                 Note(

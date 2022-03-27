@@ -1,4 +1,4 @@
-package com.example.voicenotes.ui.player
+package com.example.voicenotes.ui.services
 
 import android.annotation.SuppressLint
 import android.app.Service
@@ -6,7 +6,6 @@ import android.content.Intent
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.IBinder
-import android.provider.MediaStore
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 

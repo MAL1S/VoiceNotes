@@ -14,5 +14,9 @@
         android:id="@+id/notesFragment"
         android:name="com.example.voicenotes.ui.notes.NotesFragment"
         android:label="fragment_notes"
-        tools:layout="@layout/fragment_notes" />
+        tools:layout="@layout/fragment_notes" >
+        <action
+            android:id="@+id/action_notesFragment_to_recordFragment"
+            app:destination="@id/recordFragment" />
+    </fragment>
 </navigation>

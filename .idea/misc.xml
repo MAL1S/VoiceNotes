@@ -3,8 +3,9 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/PROJECTS/Android/VoiceNotes/app/src/main/res/drawable/state_enabled_color.xml" value="0.297" />
         <entry key="..\:/PROJECTS/Android/VoiceNotes/app/src/main/res/layout/activity_main.xml" value="0.371875" />
-        <entry key="..\:/PROJECTS/Android/VoiceNotes/app/src/main/res/layout/fragment_notes.xml" value="0.19166666666666668" />
+        <entry key="..\:/PROJECTS/Android/VoiceNotes/app/src/main/res/layout/fragment_notes.xml" value="0.371875" />
         <entry key="..\:/PROJECTS/Android/VoiceNotes/app/src/main/res/layout/fragment_notes_fragment.xml" value="0.371875" />
         <entry key="..\:/PROJECTS/Android/VoiceNotes/app/src/main/res/layout/fragment_record.xml" value="0.371875" />
         <entry key="..\:/PROJECTS/Android/VoiceNotes/app/src/main/res/layout/item_note.xml" value="0.371875" />
