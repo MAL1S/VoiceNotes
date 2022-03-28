@@ -1,14 +1,15 @@
 package com.example.voicenotes.domain.usecase
 
 import com.example.voicenotes.data.repository.AuthVkRepositoryImpl
+import com.vk.api.sdk.VK
 import javax.inject.Inject
 
 class AuthUseCase @Inject constructor(
     private val authVkRepositoryImpl: AuthVkRepositoryImpl
 ) {
 
-    fun ifLoggedIn(): Boolean {
-        return authVkRepositoryImpl.ifLoggedIn()
+    fun isLoggedIn(): Boolean {
+        return VK.isLoggedIn()
     }
 
     fun auth(token: String) {

@@ -16,7 +16,7 @@ class FileNameSharedPrefImpl @Inject constructor(
         sharedPref.edit()
             .putInt(FILE_NAME, currentIndex+1)
             .apply()
-        return "untitled $currentIndex"
+        return "untitled$currentIndex"
     }
 
     override fun saveFileToStorage(file: File) {

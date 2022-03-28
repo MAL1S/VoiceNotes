@@ -100,6 +100,7 @@ class NotesFragment : Fragment(), OnNoteItemClickListener {
                 when (result) {
                     is VKAuthenticationResult.Success -> {
                         notesFragmentViewModel.auth(token = result.token.accessToken)
+                        Log.d("GGG", result.token.accessToken)
                     }
                     is VKAuthenticationResult.Failed -> {
                         Toast.makeText(requireActivity(), "Произошла ошибка", Toast.LENGTH_SHORT).show()
@@ -147,6 +148,9 @@ class NotesFragment : Fragment(), OnNoteItemClickListener {
                 notesFragmentViewModel.logout()
                 requireActivity().invalidateOptionsMenu()
             }
+            R.id.nav_save -> {
+                notesFragmentViewModel.uploadFile(File(notes[1].path))
+            }
         }
         return super.onOptionsItemSelected(item)
     }
@@ -178,20 +182,6 @@ class NotesFragment : Fragment(), OnNoteItemClickListener {
         binding.rcvNotes.adapter = adapter
         adapter.notifyDataSetChanged()
     }
-//
-//    private fun startPlaying() {
-//        isPlaying = true
-////        player?.start()
-//        player?.seekTo(currentPosition)
-//        handler.postDelayed(playingNote, 0)
-//    }
-
-//    private fun stopPlaying() {
-//        isPlaying = false
-//        //updateNoteToNotPlaying(currentIndex)
-//        //player?.stop()
-//        handler.removeCallbacks(playingNote)
-//    }
 
     private fun fillNotesList() {
         notes.clear()
@@ -200,6 +190,8 @@ class NotesFragment : Fragment(), OnNoteItemClickListener {
 
         for (file in dir.listFiles()) {
             Log.d("AAA", "$file")
+
+            if (!file.absolutePath.endsWith(".m4a")) continue
 
             var durationInMilliseconds: Int? = null
 
@@ -244,65 +236,6 @@ class NotesFragment : Fragment(), OnNoteItemClickListener {
             )
             ActivityCompat.requestPermissions(requireActivity(), permissions, 0)
         }
-
-//        val requestPermissionLauncher =
-//            registerForActivityResult(
-//                ActivityResultContracts.RequestPermission()
-//            ) { isGranted: Boolean ->
-//                if (isGranted) {
-//                    Toast.makeText(requireContext(), "URA", Toast.LENGTH_SHORT).show()
-//                } else {
-//                    Toast.makeText(requireContext(), "NOT URA", Toast.LENGTH_SHORT).show()
-//                }
-//            }
-//
-//        when (PackageManager.PERMISSION_GRANTED) {
-//            ContextCompat.checkSelfPermission(
-//                requireContext(),
-//                Manifest.permission.WRITE_EXTERNAL_STORAGE
-//            ) -> {
-//                // You can use the API that requires the permission.
-//            }
-//            else -> {
-//                // You can directly ask for the permission.
-//                // The registered ActivityResultCallback gets the result of this request.
-//                requestPermissionLauncher.launch(
-//                    Manifest.permission.WRITE_EXTERNAL_STORAGE
-//                )
-//            }
-//        }
-//
-//        when (PackageManager.PERMISSION_GRANTED) {
-//            ContextCompat.checkSelfPermission(
-//                requireContext(),
-//                Manifest.permission.READ_EXTERNAL_STORAGE
-//            ) -> {
-//                // You can use the API that requires the permission.
-//            }
-//            else -> {
-//                // You can directly ask for the permission.
-//                // The registered ActivityResultCallback gets the result of this request.
-//                requestPermissionLauncher.launch(
-//                    Manifest.permission.READ_EXTERNAL_STORAGE
-//                )
-//            }
-//        }
-//
-//        when (PackageManager.PERMISSION_GRANTED) {
-//            ContextCompat.checkSelfPermission(
-//                requireContext(),
-//                Manifest.permission.RECORD_AUDIO
-//            ) -> {
-//                // You can use the API that requires the permission.
-//            }
-//            else -> {
-//                // You can directly ask for the permission.
-//                // The registered ActivityResultCallback gets the result of this request.
-//                requestPermissionLauncher.launch(
-//                    Manifest.permission.RECORD_AUDIO
-//                )
-//            }
-//        }
     }
 
     private fun startPlayer(note: Note) {

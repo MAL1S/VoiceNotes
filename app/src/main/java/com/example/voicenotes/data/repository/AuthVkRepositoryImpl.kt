@@ -12,8 +12,8 @@ class AuthVkRepositoryImpl @Inject constructor(
     private val sharedPreferences: SharedPreferences
 ) : AuthVKRepository {
 
-    override fun ifLoggedIn(): Boolean {
-        return sharedPreferences.getString(AUTH_SHARED_PREF, null) != null
+    fun getToken(): String {
+        return sharedPreferences.getString(AUTH_SHARED_PREF, "").toString()
     }
 
     override fun auth(token: String) {
@@ -26,5 +26,6 @@ class AuthVkRepositoryImpl @Inject constructor(
         sharedPreferences.edit()
             .putString(AUTH_SHARED_PREF, null)
             .apply()
+        VK.logout()
     }
 }
