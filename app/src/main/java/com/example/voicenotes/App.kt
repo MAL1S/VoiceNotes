@@ -14,14 +14,14 @@ class App: Application() {
             .create(applicationContext)
     }
 
-    override fun onCreate() {
-        super.onCreate()
-        VK.addTokenExpiredHandler(tokenTracker)
-    }
-
-    private val tokenTracker = object: VKTokenExpiredHandler {
-        override fun onTokenExpired() {
-            // token expired
-        }
-    }
+//    override fun onCreate() {
+//        super.onCreate()
+//        VK.addTokenExpiredHandler(tokenTracker)
+//    }
+//
+//    private val tokenTracker = object: VKTokenExpiredHandler {
+//        override fun onTokenExpired() {
+//            // token expired
+//        }
+//    }
 }

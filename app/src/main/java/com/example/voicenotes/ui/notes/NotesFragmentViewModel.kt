@@ -4,15 +4,20 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.work.*
+import com.example.voicenotes.domain.usecase.AuthUseCase
 import com.example.voicenotes.ui.services.PlayerWorker
 import com.google.common.util.concurrent.ListenableFuture
+import com.vk.api.sdk.VK
 import java.util.concurrent.ExecutionException
 import javax.inject.Inject
 
 
 private const val PLAYER_TAG = "player_tag"
 
-class NotesFragmentViewModel @Inject constructor(context: Context): ViewModel() {
+class NotesFragmentViewModel @Inject constructor(
+    context: Context,
+    private val authUseCase: AuthUseCase
+): ViewModel() {
 
     private val workManager = WorkManager.getInstance(context)
 
@@ -40,23 +45,19 @@ class NotesFragmentViewModel @Inject constructor(context: Context): ViewModel() 
         workManager.cancelAllWork()
     }
 
-    fun isWorkScheduled(): Boolean {
-        val instance = WorkManager.getInstance()
-        val statuses: ListenableFuture<List<WorkInfo>> = instance.getWorkInfosByTag(PLAYER_TAG)
-        return try {
-            var running = false
-            val workInfoList: List<WorkInfo> = statuses.get()
-            for (workInfo in workInfoList) {
-                val state = workInfo.state
-                running = state == WorkInfo.State.RUNNING || state == WorkInfo.State.ENQUEUED
-            }
-            running
-        } catch (e: ExecutionException) {
-            e.printStackTrace()
-            false
-        } catch (e: InterruptedException) {
-            e.printStackTrace()
-            false
-        }
+    fun isLoggedIn(): Boolean {
+        return authUseCase.ifLoggedIn()
     }
+
+    fun auth(token: String) {
+        authUseCase.auth(token = token)
+    }
+
+    fun logout() {
+        authUseCase.logout()
+    }
+
+//    fun uploadFiles() {
+//        VK.executeSync()
+//    }
 }

@@ -2,7 +2,9 @@ package com.example.voicenotes.domain.repository
 
 interface AuthVKRepository {
 
-    fun auth()
+    fun ifLoggedIn(): Boolean
+
+    fun auth(token: String)
 
     fun logOut()
 }

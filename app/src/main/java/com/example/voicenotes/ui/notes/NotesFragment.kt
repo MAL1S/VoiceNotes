@@ -64,11 +64,6 @@ class NotesFragment : Fragment(), OnNoteItemClickListener {
                     val position =
                         ((player!!.currentPosition % (1000 * 60 * 60)) % (1000 * 60))
 
-//                    if (notes[currentIndex].isPlaying && notes[currentIndex].currentDuration == position) {
-//                        Log.d("QQQ", "${notes[currentIndex]} == $position")
-//                        //updateNoteToNotPlaying(currentIndex)
-//                        return
-//                    }
                     if (position >= notes[currentIndex].overallDuration!! ||
                         notes[currentIndex].isPlaying &&
                         notes[currentIndex].currentDuration == position &&
@@ -104,10 +99,10 @@ class NotesFragment : Fragment(), OnNoteItemClickListener {
             authLauncher = VK.login(requireActivity()) { result: VKAuthenticationResult ->
                 when (result) {
                     is VKAuthenticationResult.Success -> {
-                        Toast.makeText(requireActivity(), "URAAA", Toast.LENGTH_SHORT).show()
+                        notesFragmentViewModel.auth(token = result.token.accessToken)
                     }
                     is VKAuthenticationResult.Failed -> {
-                        Toast.makeText(requireActivity(), "(((((((((", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireActivity(), "Произошла ошибка", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
@@ -128,20 +123,29 @@ class NotesFragment : Fragment(), OnNoteItemClickListener {
     override fun onResume() {
         super.onResume()
 
+        requireActivity().invalidateOptionsMenu()
         updateUI()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.notes, menu)
+        if (notesFragmentViewModel.isLoggedIn()) {
+            inflater.inflate(R.menu.notes_logged_in, menu)
+            Toast.makeText(requireContext(), "logged IN menu", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(requireContext(), "logged OUT menu", Toast.LENGTH_SHORT).show()
+            inflater.inflate(R.menu.notes_logged_out, menu)
+        }
         return super.onCreateOptionsMenu(menu, inflater)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.nav_auth -> {
-//                view?.findNavController()?.navigate(R.id.action_notesFragment_to_authFragment)
-
                 authLauncher?.launch(arrayListOf(VKScope.DOCS))
+            }
+            R.id.nav_logout -> {
+                notesFragmentViewModel.logout()
+                requireActivity().invalidateOptionsMenu()
             }
         }
         return super.onOptionsItemSelected(item)
